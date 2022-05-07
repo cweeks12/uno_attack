@@ -48,8 +48,9 @@ class Value(Enum):
         return self.value == other.value
 
 
-NUMERIC_SUITS = list(filter(lambda x: x != Suit.WILD, Suit))
-NUMERIC_VALUES = list(filter(lambda x: x not in [Value.WILD, Value.DRAW_4], Value))
+COLORED_SUITS = list(filter(lambda x: x != Suit.WILD, Suit))
+COLORED_VALUES = list(filter(lambda x: x not in [Value.WILD, Value.DRAW_4], Value))
+NUMERIC_VALUES = list(filter(lambda x: x not in [Value.SKIP, Value.REVERSE, Value.DRAW_2], COLORED_VALUES))
 
 
 @total_ordering
@@ -69,3 +70,12 @@ class Card:
 
     def __eq__(self, other):
         return self.value == other.value and self.suit == other.suit
+
+    def is_playable(self, other):
+        """
+        This function returns a boolean value to indicate whether or not the other card is playable on this one.
+        The order doesn't matter because it just needs to match one aspect, and they're commutative
+        :param other: Another card to compare to.
+        :return: True if the card is playable, False if not
+        """
+        return self.value == other.value or self.suit == other.suit or self.suit == Suit.WILD or other.suit == Suit.WILD
